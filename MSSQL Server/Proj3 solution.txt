@@ -63,6 +63,8 @@ GO
 PRINT  'Employees before additions: should be 9 Sarah to Dash'
 Select * from Employees; 
 GO
+
+
 /* REQUIREMENT 4 */
 CREATE PROCEDURE dbo.Employee_Insert (
    -- Parameter datatype and scale match their targets ??
@@ -217,7 +219,9 @@ SELECT FirstName,
        LAG(CommissionBonus) OVER ( PARTITION BY DepartmentID ORDER BY CommissionBonus DESC ) AS NextHighestComission
 FROM dbo.Employees;
 GO
-/* Requrement 6 even better solution from Lisa :
+
+
+/* Requrement 6 :
 SELECT
 	d.DepartmentName AS 'Department Name',
 	e.FirstName AS 'First Name',
@@ -234,6 +238,7 @@ JOIN dbo.Departments d
 	ON e.DepartmentID = d.DepartmentID
 GO
 */
+
 /* REQUIREMENT 7 */
 WITH EmployeeTree AS (
     
