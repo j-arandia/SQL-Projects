@@ -1,0 +1,42 @@
+1. Return the employee’s last name aliased as Employee and the total number of orders aliased as Orders Sold that each employee processed from the orders table, sort the total from highest number to lowest
+
+
+SELECT e.lastname AS "Employee", COUNT(*) AS "Orders Sold" 
+FROM employees e INNER JOIN orders o
+ON e.employeeId = o.employeeId
+GROUP BY e.lastname
+ORDER BY 2 DESC;
+
+
+2. Return the company name aliased as Customer, the country the company is from, and the total number of orders sold in that country aliased as “Total Orders from Country”. Be sure to only list the customer once and sort the list alphabetically by country and limit the results to 10 rows.
+
+
+SELECT DISTINCT c.companyname AS "Customers", c.country, 
+COUNT(*) OVER(PARTITION BY c.country) AS "Total Orders from Country"
+FROM customers c INNER JOIN orders o
+ON c.customerid = o.customerid
+ORDER BY 2;
+
+
+3. Return the order ids and the total sum of quantities from each order in the order details table. Label the total value as "Total Qtys" and return only the orders that had total quantities > 175. Sort this one on total quantities from highest to lowest.
+
+
+SELECT orderid, SUM(quantity) AS "Total Qtys"
+FROM orderdetails
+GROUP BY orderid
+HAVING SUM(quantity) > 175
+ORDER BY 2 DESC;
+
+
+4. Return the company name and the total number of unitsinstock for that supplier labeled as "Total Units in Stock". Limit the list so that only the companies that have more than 200 total units are shown. Then sort the list highest total units to lowest total units.
+
+
+SELECT companyname, SUM(unitsinstock) AS "Total Units in Stock"
+FROM suppliers s INNER JOIN products p
+ON s.supplierid = p.supplierid
+GROUP BY companyname
+HAVING SUM(unitsinstock) > 200
+ORDER BY 2 DESC;
+
+
+

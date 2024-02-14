@@ -1,0 +1,131 @@
+DROP TABLE customers CASCADE CONSTRAINTS;
+CREATE TABLE customers
+(
+customerId CHAR(5) NOT NULL,
+companyName VARCHAR2(40) NOT NULL,
+contactName VARCHAR2(30),
+contactTitle VARCHAR2(30),
+address VARCHAR2(60),
+city VARCHAR2(15),
+region VARCHAR2(15),
+postalCode VARCHAR2(10),
+country VARCHAR2(15),
+phone VARCHAR2(24),
+fax VARCHAR2(24),
+email VARCHAR2(50),
+CONSTRAINT customers_pk PRIMARY KEY (customerId)
+);
+
+
+DROP TABLE employees CASCADE CONSTRAINTS;
+CREATE TABLE employees
+(
+employeeId NUMBER(8,0) NOT NULL,
+lastName VARCHAR2(20) NOT NULL,
+firstName VARCHAR2(10) NOT NULL,
+title VARCHAR2(30),
+titleOfCourtesy VARCHAR2(25),
+birthdate DATE,
+hiredate DATE,
+address VARCHAR2(60),
+city VARCHAR2(15),
+region VARCHAR2(15),
+postalCode VARCHAR2(10),
+country VARCHAR2(15),
+homephone VARCHAR2(24),
+extension VARCHAR2(4),
+notes VARCHAR2(600),
+reportsto NUMBER(8,0),
+photopath VARCHAR2(255),
+socialInsuranceNumber CHAR(9),
+CONSTRAINT employees_pk PRIMARY KEY (employeeId)
+);
+
+DROP TABLE shippers CASCADE CONSTRAINTS;
+CREATE TABLE shippers
+(
+shipperId NUMBER(8,0) NOT NULL,
+companyName VARCHAR2(40) NOT NULL,
+phone VARCHAR2(24),
+CONSTRAINT shippers_pk PRIMARY KEY (shipperId)
+);
+
+DROP TABLE suppliers CASCADE CONSTRAINTS;
+CREATE TABLE suppliers
+(
+supplierId NUMBER (8,0) NOT NULL,
+companyName VARCHAR2(40) NOT NULL,
+contactName VARCHAR2(30),
+contactTitle VARCHAR2(30),
+address VARCHAR2(60),
+city VARCHAR2(15),
+region VARCHAR2(15),
+postalCode VARCHAR2(10),
+country VARCHAR2(15),
+phone VARCHAR2(24),
+fax VARCHAR2(24),
+homepage VARCHAR2(200),
+CONSTRAINT suppliers_pk PRIMARY KEY (supplierId)
+);
+
+DROP TABLE categories CASCADE CONSTRAINTS;
+CREATE TABLE categories
+(
+categoryId NUMBER(8,0) NOT NULL,
+categoryName VARCHAR2(15) NOT NULL,
+categoryCode NUMBER (6,0),
+description VARCHAR2(300),
+CONSTRAINT categories_pk PRIMARY KEY (categoryId)
+);
+
+DROP TABLE orders CASCADE CONSTRAINTS;
+CREATE TABLE orders
+(
+    orderId NUMBER(8,0) NOT NULL,
+    customerId CHAR(5),
+    employeeId NUMBER (8,0),
+    territoryId VARCHAR2(20),
+    orderDate DATE,
+    requireDate DATE,
+    shippedDate DATE,
+    shipVia NUMBER(8,0),
+    freight NUMBER(8,2),
+    shipName VARCHAR2(40),
+    shipAddress VARCHAR2(60),
+    shipCity VARCHAR2(15),
+    shipRegion VARCHAR2(15),
+    shipPostalCode VARCHAR2(10),
+    shipCountry VARCHAR2(15),
+    CONSTRAINT orders_pk PRIMARY KEY (orderId)
+
+);
+
+DROP TABLE products CASCADE CONSTRAINTS;
+CREATE TABLE products
+(
+productId NUMBER (8,0) NOT NULL,
+productName VARCHAR2(40) NOT NULL,
+supplierId NUMBER(8,0),
+categoryId NUMBER (8,0),
+quantityPerUnit VARCHAR(20),
+unitPrice NUMBER(8,2),
+unitsInStock NUMBER (6,0),
+unitsOnOrder NUMBER (6,0),
+reOrderLevel NUMBER (6,0),
+discontinued NUMBER (1,0),
+CONSTRAINT products_pk PRIMARY KEY (productId)
+);
+
+
+
+DROP TABLE orderdetails CASCADE CONSTRAINTS;
+CREATE TABLE orderdetails
+(
+	orderId NUMBER(8,0) NOT NULL,
+	productId NUMBER(8,0) NOT NULL,
+	unitPrice NUMBER(8,2) NOT NULL,
+	quantity NUMBER(6,0) NOT NULL,
+	discount NUMBER(2,2) NOT NULL,
+	CONSTRAINT orderdetails_pk PRIMARY KEY (orderId, productId)
+);
+

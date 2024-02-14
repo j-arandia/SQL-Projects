@@ -1,0 +1,24 @@
+1. Return all vendor names aliased as Vendor, streetaddress + city + province + postal code aliased as Vendor Address for all vendors. Sort by the city within province with the city name in descending order and the province code in ascending order.
+
+
+SELECT name AS "Company Name", streetaddress|| ',' || city || ',' || province || ',' || postalcode AS "Full Address" FROM vendors ORDER BY province DESC, city
+
+
+2. Return the name with an alias of Product Name, category id aliased as Category, retail price aliased as MSRP, tax (13% of price), and full price (retail price + tax) aliased as Full Price for all products. Sort on price lowest to highest by category highest to lowest and use the ordinal position not column names to do the sorting
+
+
+SELECT name AS "Product Name", categoryid AS "Category", retailprice AS MSRP, retailprice * .13 AS Tax, retailprice * 1.13 AS "Full Price"  FROM products ORDER BY 2, 5 DESC
+
+
+3. Create a single column list labelled: Provincial Codes for Customers, and sort the list alphabetically:
+
+
+SELECT DISTINCT province AS "Provincial Codes for Customers" FROM customers ORDER BY province
+FOL : SELECT DISTINCT province AS "Provinces our Customers are In" FROM customers ORDER BY province DESC
+ 
+
+4. Return a list of vendor names aliased as Our Vendors, cities aliased as Vendor City and provinces. Sort the list city within province, and list the provinces backwards alphabetically (Z-A)
+
+
+SELECT name AS "Our Vendors", city AS "Vendor City", province FROM vendors ORDER BY province DESC, city 
+FOL : SELECT name AS "Our Suppliers", city, province FROM vendors ORDER BY province, city 

@@ -1,0 +1,79 @@
+-- test script
+--regular query formatted output
+SELECT productid, MAX(od.quotedprice * od.qtyordered) AS "High Sales"
+FROM order_details od INNER JOIN orders o
+ON od.orderid = o.id
+WHERE EXTRACT (MONTH FROM Orderdate) = 11
+GROUP BY productid
+ORDER BY 2 DESC;
+
+**checked with the regular query output is the same sa in function
+
+1. Create a function (give it a suitable name) that receives a month (as a number from 1-12) and returns the product Id that has the highest sales (QtyOrdered x QuotedPrice) for the month variable
+
+
+create or replace FUNCTION Get_PrdctId_High_Sales (in_month IN NUMBER)
+RETURN NUMBER IS
+high_sales NUMBER (4,0) := 0;
+BEGIN
+SELECT productid INTO high_sales 
+FROM (SELECT productid, MAX(quotedprice * qtyordered) AS "High Sales"
+FROM order_details od INNER JOIN orders o
+ON od.orderid = o.id
+WHERE EXTRACT (MONTH FROM Orderdate) = in_month
+GROUP BY productid
+ORDER BY 2 DESC
+FETCH first 1 rows only);
+RETURN high_sales;
+END;
+
+
+2. A stored procedure called pTopProductForMonth that has one input
+parameter month that can handle lower and upper case values).
+a. Converts the string parameter to a corresponding month number
+b. Calls the Q1 function to obtain the product id with the top sales
+c. Dumps out a heading (include your name) and a line indicating the top product # for the month
+d. If an invalid month is passed just print out an error
+
+
+
+create or replace PROCEDURE pTopProductForMonth(in_month IN VARCHAR2) IS
+month_number NUMBER(2,0) := 0;
+top_sales NUMBER := 0;    
+BEGIN
+  CASE
+      WHEN lower(in_month) = 'january' THEN month_number := 1;
+      WHEN lower(in_month) = 'february' THEN month_number := 2;
+      WHEN lower(in_month) = 'march' THEN month_number := 3;
+      WHEN lower(in_month) = 'april' THEN month_number := 4;
+      WHEN lower(in_month) = 'may' THEN month_number := 5;
+      WHEN lower(in_month) = 'june' THEN month_number := 6;
+      WHEN lower(in_month) = 'july' THEN month_number := 7;
+      WHEN lower(in_month) = 'august' THEN month_number := 8;
+      WHEN lower(in_month) = 'september' THEN month_number := 9;
+      WHEN lower(in_month) = 'october' THEN month_number := 10;
+      WHEN lower(in_month) = 'november' THEN month_number := 11;
+      WHEN lower(in_month) = 'december' THEN month_number := 12;
+      ELSE month_number := 0;
+   END CASE;
+   
+   top_sales := Get_PrdctId_High_Sales(month_number);
+   
+   IF month_number = 0 THEN
+       RAISE NO_DATA_FOUND;
+   ELSE
+      dbms_output.put_line('Lab 10 - Jassika Arandia');
+      dbms_output.put_line('The top product for ' || in_month || ' is product - ' || top_sales );
+   END IF;
+   EXCEPTION
+       WHEN NO_DATA_FOUND THEN
+       dbms_output.put_line('Invalid month entered ');
+END;
+
+
+
+BEGIN
+pTopProductForMonth('NOVEMBER');
+pTopProductForMonth('september');
+pTopProductForMonth('jan');
+END;

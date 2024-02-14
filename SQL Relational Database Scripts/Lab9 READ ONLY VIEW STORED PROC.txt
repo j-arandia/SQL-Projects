@@ -1,0 +1,96 @@
+1. Create a READ ONLY VIEW to solve the following problem (note your SQL for the view must include a subquery). Have the VIEW list all order ids, order dates, ship dates and company names and countries for all orders created between August 14th, 2019 and August 23rd, 2019 sorted on country and call the view Lab9_View
+
+
+SELECT orderid, orderdate, shippeddate, companyname, country 
+FROM orders, customers WHERE orderdate BETWEEN '2019-08-14' AND '2019-08-23'
+ORDER BY country
+
+---subquery
+SELECT orderdate FROM orders WHERE orderdate BETWEEN '2019-08-14' AND '2019-08-23' 
+
+--view
+CREATE VIEW Lab9_VIEW
+AS
+    SELECT o.orderid, o.orderdate, o.shippeddate, c.companyname, c.country
+FROM orders  o INNER JOIN customers c
+ON o.customerid = c.customerid
+WHERE o.orderdate IN (SELECT orderdate FROM orders WHERE orderdate BETWEEN '2019-08-14' AND '2019-08-23')
+ORDER BY country
+WITH READ ONLY
+
+
+  SELECT o.orderid, o.orderdate, o.shippeddate, c.companyname, c.country
+FROM orders  o INNER JOIN customers c
+ON o.customerid = c.customerid
+WHERE o.orderdate IN (SELECT orderdate FROM orders WHERE orderdate BETWEEN '2019-08-14' AND '2019-08-23')
+ORDER BY country
+
+
+
+
+2. Write a stored procedure called p_lab9 that dumps the content from the lab9_view’s data, like what we did in the last example, include your name in the heading.
+
+
+
+CREATE OR REPLACE PROCEDURE p_lab9 IS
+
+o_orderid     VARCHAR(5);
+o_orderdate orders.orderdate%type;
+o_shippeddate orders.shippeddate%type;
+c_companyname	VARCHAR(30);
+c_country 	VARCHAR(30);
+
+CURSOR c_aug_orders IS 
+
+SELECT LPAD(o_orderid, 4, '  '), o_orderdate, RPAD(NVL(RPAD(o_shippeddate,10, ' '), ' --'), 10, ' '), c_companyname, c_country
+    FROM LAB9_VIEW;
+    
+BEGIN
+    dbms_output.put_line('Jassika Arandis''s Lab 9 - Orders by Country Aug. 14th-23rd' || chr(10));
+    dbms_output.put_line('#' || ' ' || ' Order Date '  || ' ' ||  ' Ship Date  '  || ' ' ||  ' Company ' || ' ' ||  ' Country '  || chr(10));
+OPEN c_aug_orders;
+    LOOP
+    FETCH c_aug_orders into o_orderid, o_orderdate, o_shippeddate, c_companyname, c_country;
+        EXIT WHEN c_aug_orders%notfound;
+        dbms_output.put_line(o_orderid || '    ' || o_orderdate|| '    ' ||o_shippeddate|| '    ' ||c_companyname|| '    ' ||c_country);
+    END LOOP;
+    CLOSE c_aug_orders;
+END;
+
+BEGIN
+    p_lab9;
+END;
+
+SELECT * FROM LAB9_VIEW
+
+SELECT * FROM user_errors
+
+
+--REVISED CURSOR
+create or replace PROCEDURE p_lab9 IS
+
+o_orderid     VARCHAR(6);
+o_orderdate orders.orderdate%type;
+o_shippeddate orders.shippeddate%type;
+c_companyname	VARCHAR(30);
+c_country 	VARCHAR(30);
+
+CURSOR c_aug_orders IS 
+
+SELECT o.orderid, o.orderdate, o.shippeddate, c.companyname, c.country
+FROM orders  o INNER JOIN customers c
+ON o.customerid = c.customerid
+WHERE o.orderdate IN (SELECT orderdate FROM orders WHERE orderdate BETWEEN '2019-08-14' AND '2019-08-23')
+ORDER BY country;
+    
+BEGIN
+    dbms_output.put_line('Jassika Arandis''s Lab 9 - Orders by Country Aug. 14th-23rd' || chr(10));
+    dbms_output.put_line('  # ' || '   ' || ' Order Date '  || '   ' ||  ' Ship Date  '  || '      ' ||  ' Company ' || '          ' ||  ' Country '  || chr(10));
+OPEN c_aug_orders;
+    LOOP
+    FETCH c_aug_orders into o_orderid, o_orderdate, o_shippeddate, c_companyname, c_country;
+        EXIT WHEN c_aug_orders%notfound;
+        dbms_output.put_line(RPAD(o_orderid,5,' ') || '    ' || RPAD(o_orderdate,9,' ') || '    ' || RPAD(NVL(RPAD(o_shippeddate,10,' '), '    --'),10,' ') || '    ' || RPAD(c_companyname,20,' ') || '    ' || RPAD(c_country,11,' '));
+    END LOOP;
+    CLOSE c_aug_orders;
+END;
